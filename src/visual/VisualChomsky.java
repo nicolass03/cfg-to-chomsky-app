@@ -3,12 +3,16 @@ package visual;
 import java.awt.*;
 import javax.swing.*;
 
+import model.Chomsky;
+
 @SuppressWarnings("serial")
 public class VisualChomsky extends JFrame{
 	
 	private PanelGIC gicPane;
 	private PanelOptions optPane;
 	private PanelResult resPane;
+	
+	private Chomsky chomsky;
 	
 	public VisualChomsky() {
 		
@@ -40,8 +44,7 @@ public class VisualChomsky extends JFrame{
 	}
 
 	public void convertGIC() {
-		// TODO Auto-generated method stub
-		
+		chomsky = new Chomsky(gicPane.getValues());
 	}
 
 }

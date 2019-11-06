@@ -1,6 +1,7 @@
 package visual;
 
 import java.awt.Color;
+import java.util.Hashtable;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -12,5 +13,9 @@ public class PanelResult extends JPanel {
 		setBorder(BorderFactory.createTitledBorder("Result"));
 		setBackground(Color.WHITE);
 
+	}
+	
+	public void setResult(Hashtable r) {
+		
 	}
 }

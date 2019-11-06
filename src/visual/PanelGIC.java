@@ -2,6 +2,12 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -31,21 +37,21 @@ public class PanelGIC extends JPanel {
 		validate();
 	}
 	
-	public String[][] getValues(){
-		String[][] values = new String[table.getRowCount()][table.getColumnCount()];
-		boolean done = false;
+	public Map getValues(){
+		Map<Character, ArrayList> values = Collections.synchronizedMap(
+				  new LinkedHashMap<Character, ArrayList>());		
 		for(int i = 0; i < table.getRowCount(); i++) {
-			for(int j = 0; j < table.getColumnCount(); j++) {
-				if(table.getValueAt(i, j) == null || table.getValueAt(i, j).equals("")) {
-					done = true;
-					break;					
-				}
-				else {
-					values[i][j] = (String) table.getValueAt(i, j);
-				}
+			String a = ((String) table.getValueAt(i, 0));
+			if(a != null && !a.equals("")) {
+				Character v = a.charAt(0);
+				String p = (String) table.getValueAt(i, 1);
+				String[] prods = p.split(",");
+				ArrayList productions = new ArrayList(Arrays.asList(prods));
+				values.put(v, productions);
 			}
-			if(done)
+			else {
 				break;
+			}
 		}
 		return values;
 	}
