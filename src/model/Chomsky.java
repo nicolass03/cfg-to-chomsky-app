@@ -1,5 +1,6 @@
 package model;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -110,7 +111,14 @@ public class Chomsky {
 	}
 
 	private void removeUnreachables() {
-		
+		ArrayList<Character> initial = new ArrayList<Character>();
+		initial.add((Character) grammar.keySet().toArray()[0]);
+		ArrayList<Character> reachables = findReachables(initial);
+		Set<Character> variables = grammar.keySet();
+		variables.removeAll(reachables);
+		for (Character key : variables) {
+			grammar.remove(key);
+		}
 	}
 
 	private ArrayList<Character> findReachables(ArrayList<Character> reachables) {
@@ -173,5 +181,14 @@ public class Chomsky {
 				return false;
 		}
 		return true;
+	}
+
+	private ArrayList<Character> getGrammarVariables() {
+		ArrayList<Character> variables = new ArrayList<Character>();;
+		for (Entry e : grammar.entrySet()) {
+			variables.add((Character) e.getKey());
+		}
+
+		return variables;
 	}
 }
