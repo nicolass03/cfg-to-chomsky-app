@@ -18,7 +18,7 @@ public class VisualChomsky extends JFrame{
 		
 		setLayout(new BorderLayout());
 		setTitle("GIC to Chomsky");
-		setPreferredSize(new Dimension(700,300));
+		setPreferredSize(new Dimension(900,300));
 		setResizable(false);
 		setBackground(Color.WHITE);
 		
@@ -45,6 +45,7 @@ public class VisualChomsky extends JFrame{
 
 	public void convertGIC() {
 		chomsky = new Chomsky(gicPane.getValues());
+		resPane.setValues(chomsky.getGrammar());
 	}
 
 }

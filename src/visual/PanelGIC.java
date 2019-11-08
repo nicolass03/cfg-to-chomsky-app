@@ -39,19 +39,24 @@ public class PanelGIC extends JPanel {
 	
 	public Map getValues(){
 		Map<Character, ArrayList> values = Collections.synchronizedMap(
-				  new LinkedHashMap<Character, ArrayList>());		
-		for(int i = 0; i < table.getRowCount(); i++) {
-			String a = ((String) table.getValueAt(i, 0));
-			if(a != null && !a.equals("")) {
-				Character v = a.charAt(0);
-				String p = (String) table.getValueAt(i, 1);
-				String[] prods = p.split(",");
-				ArrayList productions = new ArrayList(Arrays.asList(prods));
-				values.put(v, productions);
-			}
-			else {
-				break;
-			}
+				new LinkedHashMap<Character, ArrayList>());		
+		try {
+			for(int i = 0; i < table.getRowCount(); i++) {
+				String a = ((String) table.getValueAt(i, 0));
+				if(a != null && !a.equals("")) {
+					Character v = a.charAt(0);
+					String p = (String) table.getValueAt(i, 1);
+					String[] prods = p.split(",");
+					ArrayList productions = new ArrayList(Arrays.asList(prods));
+					values.put(v, productions);
+				}
+				else {
+					break;
+				}
+			}			
+		}
+		catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Por favor presione Enter al terminar de introducir la gramática.");
 		}
 		return values;
 	}

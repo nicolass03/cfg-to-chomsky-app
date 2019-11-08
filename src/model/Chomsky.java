@@ -1,34 +1,40 @@
 package model;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 public class Chomsky {
 
+	/**
+	 * Attribute that defines the grammar
+	 */
 	private Map<Character, ArrayList<String>> grammar;
 
-	public Chomsky(Map gram) {
+	/**
+	 * Constructor of the class.
+	 * @param gram - Grammar from the UI.
+	 */
+	public Chomsky(Map<Character, ArrayList<String>> gram) {
 		grammar = gram;
 		convertToChomsky();
 	}
 
+	/**
+	 * Function that executes the corresponding steps to convert the cfg to cnf.
+	 */
 	private void convertToChomsky() {
 		//removeTerminals();
 		//removeUnreachables();
 		//simulateNullProductions();
+		simulateUnitProductions();
 	}
 
 	/**
-	 * private void initGrammar(String[][] gram) { grammar = new Hashtable<>(); for
-	 * (int i = 0; i < gram.length; i++) { Character var = gram[i][0].charAt(0);
-	 * ArrayList prods = new ArrayList<>(); for (int j = 1; j < gram.length; j++) {
-	 * prods.add(gram[i][j]); } grammar.put(var, prods); } }
+	 * Function that removes the non_terminals variables in the grammar. 
 	 */
+	@SuppressWarnings("unchecked")
 	private void removeTerminals() {
 		// Initialize terms arraylist
 		ArrayList terms = new ArrayList<>();
@@ -67,6 +73,11 @@ public class Chomsky {
 		}
 	}
 
+	/**
+	 * Auxiliary recursive function to get all of the terminals according to Chomsky's algorithm.
+	 * @param terms - Initial terminal variables.
+	 * @return - collection with all the terminals found in the grammar.
+	 */
 	@SuppressWarnings("unchecked")
 	private ArrayList getTerminals(ArrayList terms) {
 		ArrayList newTerms = terms;
@@ -153,13 +164,22 @@ public class Chomsky {
 		}
 	}
 
+	/**
+	 * Function that simulates null productions in the grammar.
+	 */
 	private void simulateNullProductions() {
+		//get nullables
 		ArrayList<Character> nullables = getNullables();
+		//for each item in nullables, replaces them in the gramar
 		for(Character c : nullables) {
 			replaceNullProductions(c);
 		}
 	}
 	
+	/**
+	 * Auxiliar function that gets the initial null variables.
+	 * @return - collection with all the null variables.
+	 */
 	private ArrayList<Character> getNullables(){
 		ArrayList<Character> nullables = new ArrayList<>();
 		// goes down all the entry set
@@ -181,6 +201,11 @@ public class Chomsky {
 		return getAllNullables(nullables);
 	}
 	
+	/**
+	 * Recursive function that gets all null variables.
+	 * @param nullables - initial null variables.
+	 * @return - all the collection with all the null variables.
+	 */
 	private ArrayList getAllNullables(ArrayList nullables) {
 		ArrayList<Character> newNullables = (ArrayList<Character>) nullables.clone();
 
@@ -255,10 +280,31 @@ public class Chomsky {
 		}
 	}
 
-	private static void simulateUnitProductions() {
-
+	private void simulateUnitProductions() {
+	
+		for(Entry e : grammar.entrySet()) {
+			//get the var
+			Character v = (Character) e.getKey();
+			//get the prods
+			ArrayList<String> p = (ArrayList<String>) e.getValue();
+			//if is the variable, remove the lambda
+			ArrayList<String> newProds = (ArrayList<String>) p.clone();
+			for (String c : p) {
+				if(c != "-" && c.length() == 1 && isStringUpperCase(c)) {
+					ArrayList<String> prods = grammar.get(c.charAt(0));
+					newProds.addAll(prods);
+					newProds.remove(c);
+				}
+			}
+			grammar.put(v, newProds);
+		}
 	}
 
+	/**
+	 * Function that determines if a string is lower case.
+	 * @param str - chain to prove
+	 * @return - true or false if the string is lowercase.
+	 */
 	private static boolean isStringLowerCase(String str) {
 		// convert String to char array
 		char[] charArray = str.toCharArray();
@@ -271,6 +317,11 @@ public class Chomsky {
 		return true;
 	}
 
+	/**
+	 * Function that determines if a string is upper case.
+	 * @param str - chain to prove
+	 * @return - true or false if the string is upper case.
+	 */
 	private static boolean isStringUpperCase(String str) {
 		// converts String to char array
 		char[] charArray = str.toCharArray();
@@ -283,6 +334,10 @@ public class Chomsky {
 		return true;
 	}
 
+	/**
+	 * Gets the variables in the grammar.
+	 * @return - All the variables in the grammar.
+	 */
 	private ArrayList<Character> getGrammarVariables() {
 		ArrayList<Character> variables = new ArrayList<Character>();;
 		for (Entry e : grammar.entrySet()) {
@@ -290,5 +345,9 @@ public class Chomsky {
 		}
 
 		return variables;
+	}
+	
+	public Map<Character, ArrayList<String>> getGrammar(){
+		return grammar;
 	}
 }
