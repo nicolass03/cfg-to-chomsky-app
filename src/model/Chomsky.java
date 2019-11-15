@@ -6,6 +6,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class Chomsky {
+    
+    public static final int VARIABLES = 0;
+    public static final int TERMINALS = 1;
+    public static final int MIXED = 2;
+    
 
 	/**
 	 * Attribute that defines the grammar
@@ -25,10 +30,11 @@ public class Chomsky {
 	 * Function that executes the corresponding steps to convert the cfg to cnf.
 	 */
 	private void convertToChomsky() {
-		//removeTerminals();
-		//removeUnreachables();
-		//simulateNullProductions();
+		removeTerminals();
+		removeUnreachables();
+		simulateNullProductions();
 		simulateUnitProductions();
+		createVariables();
 	}
 
 	/**
@@ -300,6 +306,76 @@ public class Chomsky {
 		}
 	}
 
+	
+	private void createVariables(){
+        Map gram = grammar.clone();
+        
+		for(Entry e : gram.entrySet()) {
+			//get the var
+			Character v = (Character) e.getKey();
+			//get the prods
+			ArrayList<String> p = (ArrayList<String>) e.getValue();
+			for(String unit : p){
+			    if(!unitary_or_binary(unit)){
+			        int typeOfProduction = get_production_type(unit);
+			        switch(typeOfProduction){
+			            case VARIABLES:
+							Hashtable newProds = reduce_variables(unit);
+							p.remove(unit);
+							p.add(newProds.get(0));
+							p.remove(0);
+							p.addAll(newProds);
+			                break;
+						case TERMINALS:
+							Hashtable newProds = reduce_terminals(unit);
+							p.remove(unit);
+							p.add(newProds.get(0));
+							p.remove(0);
+							p.addAll(newProds);
+			                break;
+			            case MIXED:
+			                break;
+			        }
+			    }
+			}
+			
+	}
+	
+	private Hashtable reduce_variables(String prod){
+	    Hashtable newProds = new Hashtable();
+	    boolean binary = false;
+	    while(!binary)
+            Character newVar = getRandomLetter().upperCase;
+            String newProd = prod.charAt(prod.length-2)+prod.charAt(prod.length-1);
+            prod = prod.substring(0,prod.length-2);
+            prod+=newVar+"";
+            newProds.put(newVar,newProd)
+            if(prod.length <= 2){
+                binary=true;
+            }
+	    }
+	    newProds.put(0,prod);
+	    return newProds;
+	}
+
+	private Hashtable reduce_terminals(String prod){
+	    Hashtable newProds = new Hashtable();
+	    boolean binary = false;
+	    while(!binary)
+            Character newVar = getRandomLetter().upperCase;
+            String newProd = prod.charAt(prod.length-2)+prod.charAt(prod.length-1);
+            prod = prod.substring(0,prod.length-2);
+            prod+=newVar+"";
+            newProds.put(newVar,newProd)
+            if(prod.length <= 1){
+                binary=true;
+            }
+	    }
+	    newProds.put(0,prod);
+	    return newProds;
+	}
+
+
 	/**
 	 * Function that determines if a string is lower case.
 	 * @param str - chain to prove
@@ -350,4 +426,36 @@ public class Chomsky {
 	public Map<Character, ArrayList<String>> getGrammar(){
 		return grammar;
 	}
-}
+
+	public Character getRandomLetter(){
+		Random r = new Random();
+		Character c = (Character)(r.nextInt(26) + 'a');
+		boolean dif = false;
+		while(!dif){
+			if(grammar.keySet().contains(c)){
+				c = (Character)(r.nextInt(26) + 'a');
+			}
+			else{
+				dif = true;
+			}	
+		}		
+
+			
+		return c;
+	
+	public Character unitary_or_binary(String prod){
+		return ((prod.length <= 2 && isStringUpperCase(prod)) || (prod.length == 1 && isStringLowerCase(prod)))?true:false;
+	}
+
+    public int get_production_type(String prod){
+        if(isStringLowerCase(prod)){
+            return TERMINALS;
+        }
+        else if(isStringUpperCase(prod)){
+            return VARIABLES;
+        }
+        else{
+            return MIXED;
+        }
+    }
+	
